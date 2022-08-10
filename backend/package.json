@@ -1,0 +1,34 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Get pages off the web in the form of text-only HTML.",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "test": "echo \"No tests\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martmichals/simply-browse.git"
+  },
+  "keywords": [
+    "browse",
+    "text-only",
+    "search"
+  ],
+  "author": "Martin Michalski",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/martmichals/simply-browse/issues"
+  },
+  "homepage": "https://github.com/martmichals/simply-browse#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.19",
+    "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  }
+}
