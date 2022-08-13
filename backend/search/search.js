@@ -32,7 +32,7 @@ parseQuery = function(req) {
     } 
 }
 
-module.exports.searchBing = async function (req, res) {
+module.exports.searchBing = async function (req, res, db) {
     // Parse the query
     const queryString = parseQuery(req)
 

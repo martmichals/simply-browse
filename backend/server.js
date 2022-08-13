@@ -1,8 +1,13 @@
 // Local dependencies
 const search = require('./search/search')
 
+// Database connection
+const MongoClient = require('mongodb').MongoClient
+const client = new MongoClient('mongodb://127.0.0.1:27017', { useNewUrlParser: true })
+
 // General dependencies
 const cors = require('cors')
+const assert = require('assert')
 const express = require('express')
 const bodyParser = require('body-parser')
 
@@ -15,11 +20,23 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+// Set up connection to the database
+client.connect( (err) => {
+    // Validate connection success
+    assert.equal(null, err)    
+
+    // Establish connnection
+    const dbName = 'simply-browse'
+    const db = client.db(dbName)
+    console.log('Connected to local MongoDB database')
+    console.log(`Database: ${dbName}`)
+})
+
 // Set up endpoints
 app.get('/search', async (req, res) => {
     // Call function to get search results
     try {
-        await search.searchBing(req, res)
+        await search.searchBing(req, res, db)
     } catch(err) {
         console.error(err)
         res.status(500).send({ message: 'Internal Server Error! See server logs for details.' })
