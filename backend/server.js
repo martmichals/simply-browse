@@ -1,61 +1,38 @@
-// Local dependencies
-const search = require('./search/search')
+// Syntax to export a function from a module
+// exports.fxnName = (a, b) => {}
 
-// Database connection
-const MongoClient = require('mongodb').MongoClient
-const client = new MongoClient('mongodb://127.0.0.1:27017', { useNewUrlParser: true })
+// Import that module into a different file
+// const server = require('./server')
+// Regex accepted in the express routing fxns
 
-// General dependencies
+// NPM modules
 const cors = require('cors')
-const assert = require('assert')
 const express = require('express')
-const bodyParser = require('body-parser')
 
-// Set up app
-app = express()
-port = process.env.PORT || 3000
+// Local modules
+const log = require('./middleware/log')
 
-// Middleware
-app.use(cors())
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+// Express app
+const app = express()
 
-// Set up connection to the database
-client.connect( (err) => {
-    // Validate connection success
-    assert.equal(null, err)    
+// Middleware request logger
+app.use(log.logger)
 
-    // Establish connnection
-    const dbName = 'simply-browse'
-    const db = client.db(dbName)
-    console.log('Connected to local MongoDB database')
-    console.log(`Database: ${dbName}`)
-})
+// Third-party middleware
+const corsWhitelist = new Set(['http://127.0.0.1:5500'])
+app.use(cors({
+    origin: (origin, callback) => {
+        if (origin in corsWhitelist || !origin) {
+            callback(null, true)
+        } else {
+            callback(new Error('Origin not allowed by CORS'))
+        }
+    },
+    optionsSuccessStatus: 200
+}))
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
 
-// Set up endpoints
-app.get('/search', async (req, res) => {
-    // Call function to get search results
-    try {
-        await search.searchBing(req, res, db)
-    } catch(err) {
-        console.error(err)
-        res.status(500).send({ message: 'Internal Server Error! See server logs for details.' })
-    }
+// Instantiate server 
+const PORT = process.env.PORT || 3000
 
-    // TODO: Set up queue for incoming search requests to enforce TPS limit on Bing API
-    // TODO: Set up persistent DB solution to store requests in the month, TPS load for the second
-    // TODO: Set up Bing API querying (conditional on abscence from local cache)
-    // TODO: Set up local persistent DB solution to store request results
-    // TODO: Return results/errors properly
-})
-app.get('/view', (req, res) => {
-    console.log('Hit the view endpoint')
-    // TODO: Set up code to get webpage
-    // TODO: Parse webpage with readability
-    // TODO: Parse links/images etc. still embedded in readability
-    // TODO: Do any additional HTML tag processing deemed necessary
-    // TODO: Cache view results in local persistent DB solution
-})
-
-// Start app
-app.listen(port, () => { console.log('API live on port local' + port) })
