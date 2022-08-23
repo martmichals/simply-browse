@@ -4,6 +4,7 @@ const express = require('express')
 
 // Local modules
 const log = require('./middleware/log')
+const { corsOptions } = require('./config/corsOptions')
 const { errorHandler } = require('./middleware/errorHandler')
 
 // Express app
@@ -13,19 +14,12 @@ const app = express()
 app.use(log.reqLogger)
 
 // Third-party middleware
-const corsWhitelist = new Set(['http://127.0.0.1:5500'])
-app.use(cors({
-    origin: (origin, callback) => {
-        if (origin in corsWhitelist || !origin) {
-            callback(null, true)
-        } else {
-            callback(new Error('Origin not allowed by CORS'))
-        }
-    },
-    optionsSuccessStatus: 200
-}))
+app.use(cors())
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
+
+// API instantiation
+app.use('/api', require('./routes/api'))
 
 // Error handling and logging
 app.use(errorHandler)
