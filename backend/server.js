@@ -14,7 +14,7 @@ const app = express()
 app.use(log.reqLogger)
 
 // Third-party middleware
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 

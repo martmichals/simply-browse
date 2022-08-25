@@ -133,4 +133,4 @@ dist
 package-lock.json
 
 # Secrets
-secrets.json
+secrets.js
