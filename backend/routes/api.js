@@ -1,5 +1,6 @@
 // Local modules
 const log = require('../middleware/log')
+const { searchBing } = require('../api/bingSearch')
 
 // Third-party modules
 const express = require('express')
@@ -28,6 +29,10 @@ router.get('/search', (req, res) => {
 
     // Log out the parse
     log.logEvents('log', `Parsed GET request query into queryString "${queryString}"`)
+
+    // TODO: Possibly switch API based on monthly request count
+
+    searchBing(queryString, res)
 })
 
 module.exports = router
