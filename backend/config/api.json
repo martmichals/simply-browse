@@ -1,0 +1,13 @@
+{
+    "instLimiterSettings": {
+        "bing": {
+            "maxConcurrent": 3,
+            "minTime": 333
+        }
+    },
+    "generalLimiterSettings": {
+        "bing": {
+
+        }
+    }
+}

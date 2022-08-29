@@ -4,10 +4,11 @@ const Bottleneck = require('bottleneck/es5')
 
 // Local imports
 const log = require('../middleware/log')
-const { keys, limiterSettings } = require('../config/secrets')
+const apiConfig = require('../config/api.json')
+const secrets = require('../config/secrets.json')
 
 // Instantaneous limiter 
-const limiter = new Bottleneck(limiterSettings)
+const limiter = new Bottleneck(apiConfig.instLimiterSettings)
 
 // Search function
 exports.searchBing = async function (queryString, res) {
@@ -21,15 +22,15 @@ exports.searchBing = async function (queryString, res) {
     }).toString()
 
     // Log query
-    log.logEvents('log', `Launching Bing API request with the query "${queryString}"`)
+    log.logEvents('log', `Launching Bing API request with the query "${query}"`)
 
     // Launch the request
     limiter.submit(
         https.get, 
         {
             hostname: 'api.bing.microsoft.com',
-            path:     '/v7.0/search?q=' + query,
-            headers:  { 'Ocp-Apim-Subscription-Key': keys.bing }
+            path:     '/v7.0/search?' + query,
+            headers:  { 'Ocp-Apim-Subscription-Key': secrets.keys.bing }
         },
         resBing => {
             let body = ''
@@ -37,6 +38,8 @@ exports.searchBing = async function (queryString, res) {
             resBing.on('end', () => {
                 // Filter out unnecessary components of the response
                 const searchResults = JSON.parse(body)
+
+                console.log(searchResults)
 
                 // Construct the server response from the search results
                 let serverResponse = { 
